@@ -43,3 +43,73 @@ nodejs 是基础
 
 只用利用它原来的特性来绕开这些困难。
 
+## 依赖注入－模块化
+
+*路由、模块、依赖注入*
+
+- angularjs的模块化实现
+- 完整的项目结构
+- 使用ngRoute进行视图之间的路由
+- 一切都是从模块开始的
+- ng官方推荐的模块切分方式是什么
+- 模块之间的依赖应该怎么做？
+
+一个功能一个模块
+
+### 目录结构
+
+	app						// app
+		css
+		framework			// 存放其他控件
+		imgs
+		js
+			app.js			// 作为启动点的js
+			controllers.js	// 控制器
+			directives.js	// 指令
+			filters.js		// 过滤器
+			services.js		// 服务
+			route.js		// 路由
+			
+		tpls				// 模版temples，即html片段
+		
+		index.html
+	
+	node_module				// npm模块
+
+	package.json			 // npm配置
+	
+### 路由示例代码
+
+	// 定义模块
+	var app = angular.module('bookStoreApp', [
+		bookStoreapp依赖的模块列表，angular有官方依赖模块，需要下载
+	]);
+	
+	// 路由设置
+	app.config(function($routeProvider) {
+		$routeProvider.when('/hello', {			// 地址
+			templateUrl: 'tpls/hello.html',		// 使用模版（tpl）
+			controller: 'HelloCtrl'				// 使用的控制器（controller）
+		}).when('/list', {
+			templateUrl: 'tpls/bookList.html',
+			controller: 'BookListCtrl'
+		}).otherwise({
+			redirectTo: '/hello'				// 没有地址匹配时，重定向的位置
+		})
+	
+	});
+	
+### ng官方推荐的模块切分方式
+		
+	app
+		
+		controllers.js	// 控制器
+		directives.js	// 指令
+		filters.js		// 过滤器
+		services.js		// 服务
+		route.js		// 路由
+			
+			
+> 1. 任何ng应用都是由控制器、指令、过滤器、服务、路由组成
+> 2. 控制器、指令、服务、路由、过滤器分别放在一个模块里面（可借助grunt合并）
+> 3. 用一个总的app模块作为入口点，它依赖其他所有模块
