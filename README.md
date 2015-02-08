@@ -1,6 +1,9 @@
 # AngularDemo 
 学习Angularjs
 
+ui-route：嵌套路由
+angular-ui：angular的指令库
+
 ## angular快速上手
 
 angular是前端的mvc框架。框架存在的意义在于将代码进行分层。
@@ -219,3 +222,83 @@ output:
 
      ParentCtrl child
      ChildCtrl parent
+     
+# 指令 directive
+
+ng中一切都是指令，很多都是系统指令。如ng-mod，ng-repeat等
+
+示例代码：
+
+	angular.module("MyModule", [])
+	.directive("directiveName", function() {
+		return {
+			require：‘^其他指令名’		
+			scope: {},					
+			restrict: "AEMC",			
+			compile:function(){			
+			
+			},
+			controller:function() {		
+			
+			},
+			link: function(scope, element, attr, supermanCtrl){		
+			
+			
+			},
+		}
+	})
+
+指令加载阶段
+
+1. 加载阶段：加载angular.js，找到ng-app，确认应用边界
+2. 编译阶段：
+	1. 遍历全部dom，找到所有指令
+	2. 根据指令代码中的*template*、*replace*、*transcule*转换dom结构
+	3. 如果存在compile函数则调用
+3. 链接阶段：
+	1. 对每一条指令运行link函数
+	2. link函数：在模型和视图之间进行动态关联；一般用来操作DOM、绑定事件监听器。
+4. 备注：
+	1. 大多数情况只需要编写link就行
+	2. compile函数只在编译结束后运行一次；对于指令的每个实例，link都会执行一次。
+	
+
+restrict: 匹配模式
+
+- A：attribute 属性
+- E：element 元素
+- M：comment 注释
+- C：class 类
+
+例： hello指令
+	
+	element:
+	<hello></hello>
+	attr:
+	<div hello></div>
+	class:
+	<div class="hello"></div>
+	class:
+	<!-- directive:hello -->
+	<div></div>
+	
+template：
+
+
+replace：
+
+
+	
+# 模版缓存
+
+缓存：
+
+	// 注射器加载完所有模块时，run会被执行一次
+	myModule.run(function($templetcatch) {
+		$templetcatch.put("hello.html", "<div>......</div>")
+	})
+
+调用：
+
+	$templetcatch.get("hello.html")	
+	
