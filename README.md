@@ -113,3 +113,109 @@ nodejs 是基础
 > 1. 任何ng应用都是由控制器、指令、过滤器、服务、路由组成
 > 2. 控制器、指令、服务、路由、过滤器分别放在一个模块里面（可借助grunt合并）
 > 3. 用一个总的app模块作为入口点，它依赖其他所有模块
+
+### 常用ng
+- ng-app
+- ng-controller
+- ng-click
+- ng-show
+- ng-hide
+- ng-class
+- ngAnimate
+
+## 路由
+
+### 前端路由的基本原理
+
+- 哈希#：单页面切换
+- html5中新的history API
+- 路由但核心是给应用定义“状态”
+- 使用路由机制会影响到应用的整体编码方式（需要预先定义好状态）
+- 考虑兼容性问题与“优雅降级”
+
+## 搭建angular应用
+
+- 界面原型设计
+- 切分功能模块并建立目录结构
+- 使用angular-ui和bootstrap编写ui（UIRouter、ngGrid、表单校验）
+- 编写Controller
+- 编写Service
+- 编写Filter
+- 单元测试和集成测试
+
+## ng-controller之间通信
+
+Angular的ng-controller就是一个作用域。
+
+不同的controller都有一个$rootScope对象，所有的ng-controller都继承自ng-app。
+
+需要在不同作用域之间通信
+
+通信对象：
+- event
+- data
+
+ng方法：
+- $on：接收event与data。
+- $emint：向父（parent controller）传递event与data。
+- $broadcast：向子（child controller）传递event与data。
+- 平级（bro controller）得不到值
+
+示例代码:
+
+html：
+
+	<div ng-controller="ParentCtrl">                <!--父级-->
+
+		<div ng-controller="SelfCtrl">              <!--自己-->
+		
+			<a ng-click="click()">click me</a>
+			
+			<div ng-controller="ChildCtrl"></div>   <!--子级-->
+		
+		</div>	
+		
+		<div ng-controller="BroCtrl"></div>         <!--平级-->
+		
+	</div>
+
+js:
+
+	app.controller('SelfCtrl', function($scope) {
+		$scope.click = function() {
+			$scope.$broadcast('to-child', 'child');
+			$scope.$emit('to-parent', 'parent');
+		}
+	});
+	
+	app.controller('ParentCtrl', function($scope) {
+		$scope.$on('to-parent', function(event, data) {
+			console.log('ParentCtrl', data); //父级能得到值
+		});
+		$scope.$on('to-child', function(event, data) {
+			console.log('ParentCtrl', data); //子级得不到值
+		});
+	});
+	
+	app.controller('ChildCtrl', function($scope) {
+		$scope.$on('to-child', function(event, data) {
+			console.log('ChildCtrl', data); //子级能得到值
+		});
+		$scope.$on('to-parent', function(event, data) {
+			console.log('ChildCtrl', data); //父级得不到值
+		});
+	});
+	
+	app.controller('BroCtrl', function($scope) {
+		$scope.$on('to-parent', function(event, data) {
+			console.log('BroCtrl', data); //平级得不到值 
+		});
+		$scope.$on('to-child', function(event, data) {
+			console.log('BroCtrl', data); //平级得不到值 
+		});
+	});
+
+output:
+
+     ParentCtrl child
+     ChildCtrl parent
